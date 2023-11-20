@@ -466,7 +466,8 @@ public class BookStoreControllerTest {
         assertThat(value.getTitle(), nullValue());
         assertThat(value.getAuthor(),nullValue());
         assertThat(value.getFormats(), nullValue());
-        assertThat(value.getPrice(), nullValue());
+        assertThat(value.getPriceFrom(), nullValue());
+        assertThat(value.getPriceTo(), nullValue());
         assertThat(value.getPublicationDateStart(), nullValue());
         assertThat(value.getPublicationDateEnd(), nullValue());
         assertThat(value.getFormats(), nullValue());

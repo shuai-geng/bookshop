@@ -13,11 +13,9 @@ public class BookSearchArgument {
     private String title;
     private String author;
     private List<Format> formats;
-    private BigDecimal price; //TODO not used
     private String category;
 
     private List<Category> categories;
-    private Date publishedDate;
     private String isbn;
     private int stockLevel;
     private BigDecimal priceFrom;
@@ -55,13 +53,6 @@ public class BookSearchArgument {
         this.formats = formats;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
 
     public String getCategory() {
         return category;
@@ -77,14 +68,6 @@ public class BookSearchArgument {
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
-    }
-
-    public Date getPublishedDate() {
-        return publishedDate;
-    }
-
-    public void setPublishedDate(Date publishedDate) {
-        this.publishedDate = publishedDate;
     }
 
     public String getIsbn() {
