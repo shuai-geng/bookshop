@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-
+@Validated
 @RestController
 public class BookStoreController {
     private final BookRepository bookRepository;
@@ -107,11 +108,13 @@ public class BookStoreController {
     }
 
     @PatchMapping("book/{id}/{stockLevel}")
-    public @ResponseBody Book updateBookPartially(@PathVariable Long id, @PathVariable Integer stockLevel){
+    public @ResponseBody Book updateBookPartially(@PathVariable @Min(0) Long id, @PathVariable @Min(0) Integer stockLevel){
         return bookRepository.findById(id).map(book-> {
             book.setStockLevel(stockLevel);
             return bookRepository.save(book);
-        }).orElseThrow(()-> new BookNotFoundException(id));
+        }).orElseThrow(()->{
+            return new BookNotFoundException(id);}
+        );
     }
 
 
