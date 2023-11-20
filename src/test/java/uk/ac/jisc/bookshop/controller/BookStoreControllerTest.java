@@ -1,12 +1,16 @@
 package uk.ac.jisc.bookshop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -15,14 +19,17 @@ import uk.ac.jisc.bookshop.dao.BookRepository;
 import uk.ac.jisc.bookshop.domain.Book;
 import uk.ac.jisc.bookshop.domain.Category;
 import uk.ac.jisc.bookshop.domain.Format;
+import uk.ac.jisc.bookshop.nondomain.BookSearchArgument;
 import uk.ac.jisc.bookshop.service.BookRepositoryService;
 
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.*;
@@ -48,7 +55,8 @@ public class BookStoreControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-
+    @Captor
+    ArgumentCaptor<BookSearchArgument> bookSearchArgumentCaptor;
     /*
     test post method
      */
@@ -395,4 +403,48 @@ public class BookStoreControllerTest {
                 andExpect(MockMvcResultMatchers.status().isNotFound()).
                 andExpect(MockMvcResultMatchers.content().string("Could not find book 2"));
     }
+
+    /*
+     * test get method end
+     */
+    /*
+        test search
+     */
+    @Test
+    public void testSearchBookWithAllValidParameters() throws Exception {
+        //GIVEN  there are some books in database
+        Book book = new Book("coreJava17", "G.Cornell",Format.KINDLE, BigDecimal.valueOf( 100.00).setScale(2),
+                Category.NON_FICTION,LocalDate.of(2023,Month.JANUARY,31), "978-0-195-10519-3",10);
+
+        Mockito.when(bookRepositoryService.findBookBySearchArgument(any(BookSearchArgument.class))).thenReturn(List.of(book));
+        //WHEN there is a restful request to call the search method with all valid parameters
+        mockMvc.perform(MockMvcRequestBuilders.get("/search")
+                .param("title","core")
+                .param("author","Cornell")
+                .param("priceStart","1")
+                .param("priceEnd","101")
+                .param("dateStart","2000-01-01")
+                .param("dateEnd","2023-01-31")
+                .param("format","kindle")
+                .param("category","non-fiction")
+                .param("isbn","978-0-195-10519-3")
+                .param("page","0")
+                .param("size","2")
+                .param("sort","author;asc")
+                .param("sort","title;asc"));
+        //THEN the findBookBySearchArgument method in bookRepositoryService class has been called
+        verify(bookRepositoryService).findBookBySearchArgument(bookSearchArgumentCaptor.capture());
+        BookSearchArgument value = bookSearchArgumentCaptor.getValue();
+        //AND the request parameters have been set to BookBySearchArgument
+        assertThat(value.getTitle(),is("core"));
+        assertThat(value.getAuthor(),is("Cornell"));
+        assertThat(value.getFormats().contains(Format.KINDLE),is(true));
+        assertThat(value.getCategories().contains(Category.NON_FICTION),is(true));
+        assertThat(value.getIsbn(),is("978-0-195-10519-3"));
+        assertThat(value.getPage(),is(0));
+        assertThat(value.getSorts().stream().toList(), Matchers.contains(
+           new Sort.Order(Sort.Direction.ASC,"author").ignoreCase(), new Sort.Order(Sort.Direction.ASC,"title").ignoreCase()
+        ));
+    }
+
 }
