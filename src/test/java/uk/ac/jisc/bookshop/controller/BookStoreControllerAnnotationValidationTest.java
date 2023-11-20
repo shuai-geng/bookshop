@@ -2,30 +2,19 @@ package uk.ac.jisc.bookshop.controller;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import uk.ac.jisc.bookshop.dao.BookRepository;
-import uk.ac.jisc.bookshop.domain.Book;
-import uk.ac.jisc.bookshop.domain.Category;
-import uk.ac.jisc.bookshop.domain.Format;
 import uk.ac.jisc.bookshop.service.BookRepositoryService;
 
-import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.eq;
@@ -35,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class BookStoreControllerHibernateValidationTest {
+public class BookStoreControllerAnnotationValidationTest {
 
     @MockBean
     private BookRepository repository;
@@ -53,7 +42,7 @@ public class BookStoreControllerHibernateValidationTest {
     */
 
     @Test
-    public void testHibernateValidationEmptyFailedForCreateBook() throws Exception {
+    public void testAnnotationValidationEmptyFailedForCreateBook() throws Exception {
         //given a json book request with empty title, author and isbn value
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -79,7 +68,7 @@ public class BookStoreControllerHibernateValidationTest {
     }
 
     @Test
-    public void testHibernateValidationPriceLessThanZeroFailedForCreateBook() throws Exception {
+    public void testAnnotationValidationPriceLessThanZeroFailedForCreateBook() throws Exception {
         //given a json book request with less than 0 price value
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -103,7 +92,7 @@ public class BookStoreControllerHibernateValidationTest {
     }
 
     @Test
-    public void testHibernateValidationPriceHasMoreThanTwoFractionsFailedForCreateBook() throws Exception {
+    public void testAnnotationValidationPriceHasMoreThanTwoFractionsFailedForCreateBook() throws Exception {
         //given a json book request with price value has more than two fractions
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -127,7 +116,7 @@ public class BookStoreControllerHibernateValidationTest {
     }
 
     @Test
-    public void testHibernateValidationStockLevelPositiveAndPublishedDateIsNullFailedForCreateBook() throws Exception {
+    public void testAnnotationValidationStockLevelPositiveAndPublishedDateIsNullFailedForCreateBook() throws Exception {
         //GIVEN a json book request with positive stockLevel and null PublishedDate
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -151,7 +140,7 @@ public class BookStoreControllerHibernateValidationTest {
     }
 
     @Test
-    public void testHibernateValidationStockLevelPositiveAndPriceIsEmptyFailedForCreateBook() throws Exception {
+    public void testAnnotationValidationStockLevelPositiveAndPriceIsEmptyFailedForCreateBook() throws Exception {
         //GIVEN a json book request with positive stockLevel and empty Price
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -174,7 +163,7 @@ public class BookStoreControllerHibernateValidationTest {
                 andExpect(MockMvcResultMatchers.jsonPath("$.stockLevel", is("stockLevel should be zero if price is empty")));
     }
     @Test
-    public void testHibernateValidationWithNoMandatoryFieldFailedForCreateBook() throws Exception {
+    public void testAnnotationValidationWithNoMandatoryFieldFailedForCreateBook() throws Exception {
         //GIVEN a valid json book request doesn't contain mandatory field title
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -198,7 +187,7 @@ public class BookStoreControllerHibernateValidationTest {
 
 
     @Test
-    public void testHibernateValidationWithNegativeStockLevelForCreateBook() throws Exception {
+    public void testAnnotationValidationWithNegativeStockLevelForCreateBook() throws Exception {
         //GIVEN a valid json book request contains a negative stock level
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -227,7 +216,7 @@ public class BookStoreControllerHibernateValidationTest {
         test update method start
      */
     @Test
-    public void testHibernateValidationEmptyFailedForUpdateBook() throws Exception {
+    public void testAnnotationValidationEmptyFailedForUpdateBook() throws Exception {
         //given a json book request with empty title, author and isbn value
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -253,7 +242,7 @@ public class BookStoreControllerHibernateValidationTest {
     }
 
     @Test
-    public void testHibernateValidationPriceLessThanZeroFailedForUpdateBook() throws Exception {
+    public void testAnnotationValidationPriceLessThanZeroFailedForUpdateBook() throws Exception {
         //given a json book request with less than 0 price value
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -277,7 +266,7 @@ public class BookStoreControllerHibernateValidationTest {
     }
 
     @Test
-    public void testHibernateValidationPriceHasMoreThanTwoFractionsFailedForUpdateBook() throws Exception {
+    public void testAnnotationValidationPriceHasMoreThanTwoFractionsFailedForUpdateBook() throws Exception {
         //given a json book request with price value has more than two fractions
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -302,7 +291,7 @@ public class BookStoreControllerHibernateValidationTest {
 
 
     @Test
-    public void testHibernateValidationStockLevelPositiveAndPublishedDateIsNullFailedFoUpdateBook() throws Exception {
+    public void testAnnotationValidationStockLevelPositiveAndPublishedDateIsNullFailedFoUpdateBook() throws Exception {
         //GIVEN a json book request with positive stockLevel and null PublishedDate
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -326,7 +315,7 @@ public class BookStoreControllerHibernateValidationTest {
     }
 
     @Test
-    public void testHibernateValidationStockLevelPositiveAndPriceIsEmptyFailedForUpdateBook() throws Exception {
+    public void testAnnotationValidationStockLevelPositiveAndPriceIsEmptyFailedForUpdateBook() throws Exception {
         //GIVEN a json book request with positive stockLevel and empty Price
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -350,7 +339,7 @@ public class BookStoreControllerHibernateValidationTest {
     }
 
     @Test
-    public void testHibernateValidationWithNoMandatoryFieldFailedForUpdateBook() throws Exception {
+    public void testAnnotationValidationWithNoMandatoryFieldFailedForUpdateBook() throws Exception {
         //GIVEN a valid json book request doesn't contain mandatory field title
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -372,7 +361,7 @@ public class BookStoreControllerHibernateValidationTest {
                 andExpect(MockMvcResultMatchers.jsonPath("$.title", is("title is mandatory")));
     }
     @Test
-    public void testHibernateValidationWithNegativeStockLevelForUpdateBook() throws Exception {
+    public void testAnnotationValidationWithNegativeStockLevelForUpdateBook() throws Exception {
         //GIVEN a valid json book request contains a negative stock level
         MediaType utf8type = new MediaType(MediaType.APPLICATION_JSON, Charset.forName("UTF-8"));
         String requestBody = "{" +
@@ -400,7 +389,7 @@ public class BookStoreControllerHibernateValidationTest {
         test patch method
     */
     @Test
-    public void testHibernateValidationWithNegativeStockLevelAndNegativeBookIdForUpdateBookPartially() throws Exception {
+    public void testAnnotationValidationWithNegativeStockLevelAndNegativeBookIdForUpdateBookPartially() throws Exception {
         //WHEN a restful call to patch method with a negative stock level and negative book id
         //THEN the response status is 400
         //AND the response body contains error message for field stockLevel and field id
@@ -409,4 +398,9 @@ public class BookStoreControllerHibernateValidationTest {
                 andExpect(MockMvcResultMatchers.jsonPath("$.['updateBookPartially.stockLevel']", is("must be greater than or equal to 0"))).
                 andExpect(MockMvcResultMatchers.jsonPath("$.['updateBookPartially.id']",is("must be greater than or equal to 0")));
     }
+    /*
+        test patch method end
+    */
+
+
 }
