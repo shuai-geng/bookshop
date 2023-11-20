@@ -438,6 +438,10 @@ public class BookStoreControllerTest {
         //AND the request parameters have been set to BookBySearchArgument
         assertThat(value.getTitle(),is("core"));
         assertThat(value.getAuthor(),is("Cornell"));
+        assertThat(value.getPriceFrom().intValue(),is(1));
+        assertThat(value.getPriceTo().intValue(), is(101));
+        assertThat(value.getPublicationDateStart().toString(),is("2000-01-01"));
+        assertThat(value.getPublicationDateEnd().toString(),is("2023-01-31"));
         assertThat(value.getFormats().contains(Format.KINDLE),is(true));
         assertThat(value.getCategories().contains(Category.NON_FICTION),is(true));
         assertThat(value.getIsbn(),is("978-0-195-10519-3"));
@@ -447,4 +451,30 @@ public class BookStoreControllerTest {
         ));
     }
 
+    @Test
+    public void testSearchBookWithDefaultParameters() throws Exception {
+        //GIVEN  there are some books in database
+        Book book = new Book("coreJava17", "G.Cornell",Format.KINDLE, BigDecimal.valueOf( 100.00).setScale(2),
+                Category.NON_FICTION,LocalDate.of(2023,Month.JANUARY,31), "978-0-195-10519-3",10);
+        Mockito.when(bookRepositoryService.findBookBySearchArgument(any(BookSearchArgument.class))).thenReturn(List.of(book));
+        //WHEN there is a restful request to call the search method with all valid parameters
+        mockMvc.perform(MockMvcRequestBuilders.get("/search"));
+        //THEN the findBookBySearchArgument method in bookRepositoryService class has been called
+        verify(bookRepositoryService).findBookBySearchArgument(bookSearchArgumentCaptor.capture());
+        BookSearchArgument value = bookSearchArgumentCaptor.getValue();
+        //AND the default values of request parameters have been set to BookBySearchArgument
+        assertThat(value.getTitle(), nullValue());
+        assertThat(value.getAuthor(),nullValue());
+        assertThat(value.getFormats(), nullValue());
+        assertThat(value.getPrice(), nullValue());
+        assertThat(value.getPublicationDateStart(), nullValue());
+        assertThat(value.getPublicationDateEnd(), nullValue());
+        assertThat(value.getFormats(), nullValue());
+        assertThat(value.getCategories(), nullValue());
+        assertThat(value.getIsbn(), nullValue());
+        assertThat(value.getPage(),is(0));
+        assertThat(value.getSorts().stream().toList(), Matchers.contains(
+                new Sort.Order(Sort.Direction.DESC,"title").ignoreCase()
+        ));
+    }
 }

@@ -97,7 +97,6 @@ public class BookStoreController {
             book.setPublishedDate(newBook.getPublishedDate());
             book.setIsbn(newBook.getIsbn());
             book.setStockLevel(newBook.getStockLevel());
-            System.out.println("updated book:" + book);
             Book savedBook = bookRepository.saveAndFlush(book);
             return new ResponseEntity(savedBook,HttpStatus.OK);
         }).orElseGet(()-> {
