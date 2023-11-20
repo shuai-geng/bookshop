@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.ISBN;
 
+import uk.ac.jisc.bookshop.serialiser.PriceSerializer;
 import uk.ac.jisc.bookshop.validation.constraint.ZeroIfAnotherFieldIsNull;
 
 
@@ -33,11 +34,9 @@ public class Book {
     private Format format;
     @DecimalMin(value = "0.00", inclusive = false,message = "the price should great than 0")
     @Digits(integer=10, fraction=2, message= "invalid price format")
+    @JsonSerialize(using = PriceSerializer.class)
     private BigDecimal price;
     private Category category;
-    //@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    //@JsonFormat(pattern = "yyyy-MM-dd")
-    //@NotNull(message = "Please provide a valid publishedDate. the format is yyyy-MM-dd")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate publishedDate;

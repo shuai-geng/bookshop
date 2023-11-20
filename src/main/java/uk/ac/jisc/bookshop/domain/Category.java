@@ -1,6 +1,7 @@
 package uk.ac.jisc.bookshop.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Arrays;
 
@@ -22,7 +23,7 @@ public enum Category {
         }
         throw new IllegalArgumentException("Unknown enum type " + value + ",  Allowed values are " + Arrays.toString(values())) ;
     }
-
+    @JsonValue
     public String getValue(){
         return value;
     }

@@ -178,9 +178,9 @@ public class BookStoreControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title", is("coreJava")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.author", is("Cay S. Horstmann")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.format", is("PAPER")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.price", is(50.0)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.category", is("NON_FICTION")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.format", is("paper")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.price", is("50.00")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.category", is("non-fiction")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.publishedDate", is("2023-10-21")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.isbn", is("978-161-729-045-9")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(book.getId().intValue())));;
@@ -363,20 +363,22 @@ public class BookStoreControllerTest {
         Book book =  new Book("Western Lane", "Chetna Maroo", Format.HARDBACK, BigDecimal.valueOf( 90.00).setScale(2),
                 Category.FICTION, LocalDate.of(2023, Month.DECEMBER,30), " 978-152-909-462-6",5);
         Optional<Book> bookOptional = Optional.of(book);
+        book.setId(bookId);
         when(repository.findById(eq(bookId))).thenReturn(bookOptional);
         //WHEN a restful call to get method to retrieve book with id 2
         //THEN the returned response status is 200
         //AND the response body has correct book information
+        System.out.println("price is:" + book.getPrice());
         mockMvc.perform(MockMvcRequestBuilders.get("/book/2"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title", is(book.getTitle())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.author", is(book.getTitle())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.format", nullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.price", nullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.category", nullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.publishedDate", nullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.isbn", nullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.stockLevel",is(0)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.author", is(book.getAuthor())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.format", is(book.getFormat().getValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.price", is(book.getPrice().toString())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.category", is(book.getCategory().getValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.publishedDate", is(book.getPublishedDate().toString())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.isbn", is(book.getIsbn())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.stockLevel",is(book.getStockLevel())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(book.getId().intValue())));;
     }
 
