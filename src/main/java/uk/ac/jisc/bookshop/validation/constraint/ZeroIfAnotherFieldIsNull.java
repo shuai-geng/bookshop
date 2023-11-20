@@ -23,7 +23,7 @@ public @interface ZeroIfAnotherFieldIsNull {
     String fieldName();
     String dependFieldName();
 
-    String message() default "{NotNullIfAnotherFieldHasValue.message}";
+    String message() default "default message";
 
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
