@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
-//@ZeroIfAnotherFieldIsNull(fieldName="publishedDate",dependFieldName="stockLevel", message = "stockLevel should be zero if publishedDate is null")
+@ZeroIfAnotherFieldIsNull(fieldName="publishedDate",dependFieldName="stockLevel", message = "stockLevel should be zero if publishedDate is null")
 @ZeroIfAnotherFieldIsNull(fieldName="price",dependFieldName="stockLevel", message = "stockLevel should be zero if price is empty")
 @Entity
 public class Book {
