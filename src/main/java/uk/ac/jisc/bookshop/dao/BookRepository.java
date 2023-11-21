@@ -22,7 +22,8 @@ public interface BookRepository  extends JpaRepository<Book, Long> {
             "and (:dateStart is null or b.published_date>= :dateStart)" +
             "and (:dateEnd is null or b.published_date<= :dateEnd)" +
             "and (COALESCE(:formatsString) is null or b.format IN :formatsString)"+
-            "and (COALESCE(:categories) is null or b.category IN :categories)"
+            "and (COALESCE(:categories) is null or b.category IN :categories)" +
+            "and (b.isbn =:isbn  or :isbn is null or :isbn ='')"
            // "and (COALESCE(:formats) is null or format in :#{#formats.![getValue()]})"
              ,
             countQuery = "select count(*) from Book b where (b.title like %:title%  or :title is null or :title ='')and (b.author like %:author% or :author is null or :author='')"+
@@ -31,7 +32,8 @@ public interface BookRepository  extends JpaRepository<Book, Long> {
                     "and (:dateStart is null or b.published_date>= :dateStart)" +
                     "and (:dateEnd is null or b.published_date<= :dateEnd)" +
                    "and (COALESCE(:formatsString) is null or b.format IN :formatsString)"+
-                    "and (COALESCE(:categories) is null or b.category IN :categories)"
+                    "and (COALESCE(:categories) is null or b.category IN :categories)" +
+                    "and (b.isbn =:isbn  or :isbn is null or :isbn ='')"
             //        "and (COALESCE(:formats) is null or format IN :#{#formats.![getValue()]})"
             ,
             nativeQuery = true)
@@ -42,5 +44,6 @@ public interface BookRepository  extends JpaRepository<Book, Long> {
                                       // @Param("formats") List<Format> formats,
                                        @Param("formatsString")List<String>format2,
                                        @Param("categories") List<String> categories,
+                                       @Param("isbn") String isbn,
                                        Pageable pageable);
 }

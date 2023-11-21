@@ -110,6 +110,7 @@ public class BookStoreController {
                 //formats==null?Collections.emptyList():formats,
                 format2,
                 categoriesString,
+                isbn,
                 pageable);
         return new ResponseEntity<List<Book>>(result, HttpStatus.OK);
     }
