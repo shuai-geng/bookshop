@@ -93,7 +93,7 @@ public class BookRepositoryService implements BookRepositoryCustom {
         query.orderBy(covertSortToOrder(cb, root, argument.getSorts()));
 
         TypedQuery<Book> typedQuery = entityManager.createQuery(query);
-        typedQuery.setFirstResult(argument.getPage());
+        typedQuery.setFirstResult((argument.getPage()) * argument.getSize());
         if(argument.getSize()>0) typedQuery.setMaxResults(argument.getSize());
 
         List<Book> book = typedQuery.getResultList();
