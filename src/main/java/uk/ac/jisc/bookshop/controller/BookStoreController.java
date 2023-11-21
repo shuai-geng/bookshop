@@ -3,6 +3,8 @@ package uk.ac.jisc.bookshop.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Validated
 @RestController
 public class BookStoreController {
@@ -81,6 +85,33 @@ public class BookStoreController {
         Sort sorts = Sort.by(Arrays.stream(sortBy).map(sort -> sort.split(";",2)).map(array -> new Sort.Order(replaceOrderStringThroughDirection(array[1]),array[0]).ignoreCase()).collect(Collectors.toList()));
         BookSearchArgument argument = inialiseSearchArgument(title, author, priceStart, priceEnd,publicationDateStart,publicationDateEnd, formats, categories, isbn, page, size,sorts);
         return new ResponseEntity<List<Book>>(bookRepositoryService.findBookBySearchArgument(argument), HttpStatus.OK);
+    }
+
+    @GetMapping("/search2")
+    public ResponseEntity<List<Book>> searchBooks(@RequestParam(required = false) String title, @RequestParam(required = false)String author,
+                                               @RequestParam(required = false)@Min(0) Integer priceStart, @RequestParam(required = false)@Min(0)Integer priceEnd,
+                                               @RequestParam(required = false,name="dateStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate publicationDateStart,
+                                               @RequestParam(required = false,name="dateEnd")  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate publicationDateEnd,
+                                               @RequestParam(required = false,name="format") List<Format> formats,
+                                               @RequestParam(required = false,name="category") List<Category> categories,
+                                               @RequestParam(required = false,name="isbn") String isbn,
+                                               @RequestParam(required = false,name="page", defaultValue = "0") int page,
+                                               @RequestParam(required = false,name ="size", defaultValue = "10") int size,
+                                               @RequestParam(required = false,value = "sort", defaultValue = "title;desc") String[] sortBy
+    ){
+        Sort sorts = Sort.by(Arrays.stream(sortBy).map(sort -> sort.split(";",2)).map(array -> new Sort.Order(replaceOrderStringThroughDirection(array[1]),array[0]).ignoreCase()).collect(Collectors.toList()));
+        Pageable pageable = PageRequest.of(page,size,sorts);
+
+        //TODO use enum collection in jpa query got  "Cannot invoke "org.hibernate.metamodel.mapping.JdbcMapping.getJdbcValueBinder()" because "jdbcMapping" is null "
+        List<String>format2 = Optional.ofNullable(formats).orElse(Collections.emptyList()).stream().map(e->e.getValue()).collect(Collectors.toList());
+        List<String>categoriesString = Optional.ofNullable(categories).orElse(Collections.emptyList()).stream().map(e->e.getValue()).collect(Collectors.toList());
+        List<Book> result = bookRepository.FindAllByTitleAndAuthor(title,author,priceStart,priceEnd,publicationDateStart,
+                publicationDateEnd,
+                //formats==null?Collections.emptyList():formats,
+                format2,
+                categoriesString,
+                pageable);
+        return new ResponseEntity<List<Book>>(result, HttpStatus.OK);
     }
 
     @PostMapping("/book")

@@ -1,11 +1,12 @@
 package uk.ac.jisc.bookshop.nondomain;
 
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import uk.ac.jisc.bookshop.domain.Category;
 
 import java.util.stream.Stream;
 
-
+@Converter(autoApply = true)
 public class CategoryDatabaseConverter implements AttributeConverter<Category, String> {
 
     @Override
