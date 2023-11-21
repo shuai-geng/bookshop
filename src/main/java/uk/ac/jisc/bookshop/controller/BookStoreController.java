@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,6 +24,7 @@ import uk.ac.jisc.bookshop.nondomain.FormatRequestParamConverter;
 import uk.ac.jisc.bookshop.service.BookRepositoryService;
 
 import javax.net.ssl.SSLException;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -105,14 +107,31 @@ public class BookStoreController {
 
     }
 
-    @PatchMapping("book/{id}/{stockLevel}")
+    @PatchMapping("/book/{id}/{stockLevel}")
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Book updateBookPartially(@PathVariable @Min(0) Long id, @PathVariable @Min(0) Integer stockLevel){
         return bookRepository.findById(id).map(book-> {
             book.setStockLevel(stockLevel);
             return bookRepository.save(book);
-        }).orElseThrow(()->{
-            return new BookNotFoundException(id);}
-        );
+        }).orElseThrow(()-> new BookNotFoundException(id));
+    }
+
+    @PatchMapping("/book/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Book patchBook(@PathVariable @Min(0) Long id, @RequestBody Map<String, Object> fields){
+        return bookRepository.findById(id).map(book -> {
+            fields.remove("id");
+            fields.forEach((k,v)->{
+                Field field = ReflectionUtils.findField(Book.class,k);
+                if(field != null){
+                    field.setAccessible(true);
+                    ReflectionUtils.setField(field,book,v);
+                } else {
+                    new IllegalArgumentException("Unknown Book field " + k);
+                }
+            });
+        return bookRepository.saveAndFlush(book);
+        }).orElseThrow(()->new BookNotFoundException(id));
     }
 
 

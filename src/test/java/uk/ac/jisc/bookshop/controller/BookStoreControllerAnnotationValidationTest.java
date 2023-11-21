@@ -17,8 +17,6 @@ import uk.ac.jisc.bookshop.service.BookRepositoryService;
 import java.nio.charset.Charset;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -414,4 +412,7 @@ public class BookStoreControllerAnnotationValidationTest {
                 andExpect(MockMvcResultMatchers.jsonPath("$.['getBooks.priceStart']", is("must be greater than or equal to 0"))).
                 andExpect(MockMvcResultMatchers.jsonPath("$.['getBooks.priceEnd']", is("must be greater than or equal to 0")));
     }
+
+
+
 }
