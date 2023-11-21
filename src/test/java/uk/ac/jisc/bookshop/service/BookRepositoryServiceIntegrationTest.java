@@ -183,16 +183,16 @@ public class BookRepositoryServiceIntegrationTest {
     @Test
     public void testFindBookBySearchArgumentPagination(){
         //GIVEN there are 6 valid books in database
-        //AND user sets to display 2 books and skip first 3 books
+        //AND user sets to display 3 books on page 2
         BookSearchArgument bookSearchArgument = new BookSearchArgument();
-        bookSearchArgument.setSize(2);
-        bookSearchArgument.setPage(4);
+        bookSearchArgument.setSize(3);
+        bookSearchArgument.setPage(1);
         //when query the findBookBySearchArgument method
         List<Book> books = service.findBookBySearchArgument(bookSearchArgument);
-        //THEN there are 2 matched books
-        assertThat(books.size(), CoreMatchers.equalTo(2));
+        //THEN there are 3 matched books
+        assertThat(books.size(), CoreMatchers.equalTo(3));
         //AND the result is descending ordered by id
-        assertThat(books,contains(book2,  book1));
+        assertThat(books,contains(book3 , book2,  book1));
     }
 
     @AfterAll
