@@ -401,6 +401,17 @@ public class BookStoreControllerAnnotationValidationTest {
     /*
         test patch method end
     */
-
-
+    /*
+    *  test search method
+    * */
+    @Test
+    public void testAnnotationValidationWithNegativePriceForSearchBook() throws Exception {
+        //WHEN a restful call to search method with a negative priceStart parameter and a negative priceEnd parameter
+        //THEN the response status is 400
+        //AND response body contains error message for field priceStart and priceEnd
+        mockMvc.perform(MockMvcRequestBuilders.get("/search").param("priceStart","-11")
+                .param("priceEnd","-1")).andExpect(MockMvcResultMatchers.status().isBadRequest()).
+                andExpect(MockMvcResultMatchers.jsonPath("$.['getBooks.priceStart']", is("must be greater than or equal to 0"))).
+                andExpect(MockMvcResultMatchers.jsonPath("$.['getBooks.priceEnd']", is("must be greater than or equal to 0")));
+    }
 }

@@ -100,7 +100,6 @@ public class BookStoreController {
             Book savedBook = bookRepository.saveAndFlush(book);
             return new ResponseEntity(savedBook,HttpStatus.OK);
         }).orElseGet(()-> {
-            //newBook.setId(id);
             return new ResponseEntity(bookRepository.save(newBook),HttpStatus.CREATED);
         });
 
