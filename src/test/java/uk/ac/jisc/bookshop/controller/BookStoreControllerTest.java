@@ -143,7 +143,7 @@ public class BookStoreControllerTest {
                 content(requestBody).
                 contentType(utf8type)).
                 andExpect(MockMvcResultMatchers.status().isBadRequest()).
-                andExpect(MockMvcResultMatchers.content().string("JSON parse error: Cannot construct instance of `uk.ac.jisc.bookshop.domain.Format`, problem: Unknown enum type ,  Allowed values are [PAPER, HARDBACK, KINDLE, AUDIO]"));
+                andExpect(MockMvcResultMatchers.content().string("JSON parse error: Cannot construct instance of `uk.ac.jisc.bookshop.domain.Format`, problem: Unknown enum type ,  Allowed values are [paper, hardback, kindle, audio]"));
 
     }
 
@@ -291,7 +291,7 @@ public class BookStoreControllerTest {
                 content(requestBody).
                 contentType(utf8type)).
                 andExpect(MockMvcResultMatchers.status().isBadRequest()).
-                andExpect(MockMvcResultMatchers.content().string("JSON parse error: Cannot construct instance of `uk.ac.jisc.bookshop.domain.Format`, problem: Unknown enum type ,  Allowed values are [PAPER, HARDBACK, KINDLE, AUDIO]"));
+                andExpect(MockMvcResultMatchers.content().string("JSON parse error: Cannot construct instance of `uk.ac.jisc.bookshop.domain.Format`, problem: Unknown enum type ,  Allowed values are [paper, hardback, kindle, audio]"));
 
     }
     /*
